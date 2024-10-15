@@ -75,13 +75,56 @@ class Tree:
     def __isLeaf(self, linearCodeSlice:str):
         parethesisAfterComma:bool = False
         for i in range(len(linearCodeSlice)):
-            if linearCodeSlice[i] == ',' and linearCodeSlice[i+2] == '(':
+            if linearCodeSlice[i] == ')':
+                return not parethesisAfterComma
+            elif linearCodeSlice[i] == ',' and linearCodeSlice[i+2] == '(':
                 return parethesisAfterComma
-        return not parethesisAfterComma 
-    def __extractChildren(self, linearCodeSlice:str):
-        leftChild:str = ""
-        rightChild:str = ""
-        lastQuote = 0
-        while (isFirst):
-            if linearCodeSlice[0] == "'":
-                lastQuote += 1
+    def __extractLeaf(self, begginingIndex, linearCode:str):
+        """
+        It will take the whole linearCode along with the index of where the leaf in question
+        starts and, based on that, it will extract the leaf.
+        """
+    def __extractInfoFromLeaf(self, linearCodeSlice:str):
+        """
+        -format of a leaf: (<root>, <leftChild>, <rightChild>)
+        -everything between the opening parethesis and the first comma is the root
+        -everything between the first comma and the second one if the left child
+        -everything between the second comma and the closing parethesis is the right child
+        -for updating the index you just need to find the index of the closing parenthesis
+        """
+        root:Node = Node(self.__getRootOfLeaf(linearCodeSlice))
+        leftChild:Node = Node(self.__getLeftLeaf(linearCodeSlice))
+        rightChild:Node = Node(self.__getRightLeaf(linearCodeSlice))
+
+        currentIndex = linearCodeSlice.index('(');
+
+        return (root, leftChild, rightChild, currentIndex) 
+    
+    def __getRootLeaf(self,linearCodeSlice):
+        """
+        input: (<root>, <leftChild>, <rightChild>)
+        """
+        i = 0
+        root:str = ""
+        while (linearCode[i] != ','):
+            if (linearCode[i] != '('):
+                root+= linearCodeSlice[i]
+        #updates the string
+        del linearCodeSlice[:linearCodeSlice.index(',')+2]
+        return root
+    
+    def __getLeftLeaf(self, linearCodeSlice):
+        """
+        <leftChild>, <rightChild>)
+        """
+        return self.__getRootLeaf(linearCodeSlice) #it works just the same
+    
+    def __getRightLeaf(self, linearCodeSlice):
+        """
+        <rightChild>)
+        """
+        rightLeaf: str = ""
+        i = 0
+        while (linearCodeSlice[i] != '('):
+            rightLeaf += linearCodeSlice[i]
+        return rightLeaf
