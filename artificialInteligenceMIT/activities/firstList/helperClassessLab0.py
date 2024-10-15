@@ -81,6 +81,7 @@ class Tree:
     def __extractChildren(self, linearCodeSlice:str):
         leftChild:str = ""
         rightChild:str = ""
-        isFirst:bool = True
-        for i in range(len(linearCodeSlice)):
-            if (line)
+        lastQuote = 0
+        while (isFirst):
+            if linearCodeSlice[0] == "'":
+                lastQuote += 1
