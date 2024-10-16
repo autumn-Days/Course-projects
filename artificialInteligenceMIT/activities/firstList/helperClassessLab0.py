@@ -1,4 +1,4 @@
-from typing import *
+from typing import List, Tuple
 
 class Node:
     def __init__(self, value):
@@ -9,39 +9,54 @@ class Node:
         operators = ['+', '-', '*', '/', 'expt']
         return self.value in operators
     def isOperand(self):
-        return (not isOperator)
+        return (not self.isOperator())
 
 class Tree:
     def __init__(self):
         self.root = None
-
-    def __init__(self, value):
-        self.root = Node(value)
-    
+    def isEmpty(self):
+        return self.root == None
     #it builds a tree
-    def build(linearCode: Tuple):
+    def build(self,linearCode: Tuple):
         left = 1
         right = 0
         WHERE_TO_INSERT = left
         linearCode = (str(linearCode))
         scope:List[Node] = []
         currentElem = None
-        for i in range(len(linearCode)):
+        i = 0
+        while (i < len(linearCode)):
             """
             when we got to this point. It it needed to know whether or
             not we are dealing with a leaf
             """
-            if linearCode[i] == '(':
+            currentSymboll = linearCode[i]
+            if currentSymboll == '(':
                 if (self.__isLeaf(linearCode[i+1:])):
-                    pass
-
-            elif linearCode[i] == ')':
+                    bundle:Tuple[Node, Node, Node, int] = self.__extractInfoFromLeaf(linearCode[i])
+                    if (self.isEmpty()):
+                        self.root = bundle[0]
+                        scope.append(self.root)
+                    else:
+                        if (WHERE_TO_INSERT == left):
+                            scope[-1].left = bundle[0]
+                        else:
+                            scope[-1].right = bundle[0]
+                            WHERE_TO_INSERT = left
+                        scope.append(bundle[0])
+                    scope[-1].left = bundle[1]
+                    scope[-1].right = bundle[0]
+                    scope.pop()
+                    i = bundle[2]
+                    continue
+                        
+            elif currentSymboll == ')':
                 scope.pop()
-            elif linearCode[i] == ',' and linearCode[i+2] != '(':
+            elif currentSymboll == ',' and linearCode[i+2] != '(':
                 WHERE_TO_INSERT = right
-            elif (linearCode[i] >= '0' and linearCode[i] <= '9'):
+            elif (currentSymboll >= '0' and linearCode[i] <= '9'):
                 currentElem = Node(self.getOperand(linearCode[i:]))
-            elif (linearCode[i] == "'"):
+            elif (currentSymboll == "'"):
                 currentElem = Node(self.getOperator(linearCode[i+1]))
 
             if (not self.root):
@@ -53,12 +68,13 @@ class Tree:
                 else:
                     scope[-1].right = currentElem
                 scope.append(currentElem)
-    """
-    After converting the tuple to a string, you will have something like that
-    <<('expt', 'b', 2)>> so it is needed to extract this "expt" in quotes, that's
-    when this methods comes in.
-    """
+            i+= 1
     def __getOperator(self,linearCodeSlice:str):
+        """
+        After converting the tuple to a string, you will have something like that
+        <<('expt', 'b', 2)>> so it is needed to extract this "expt" in quotes, that's
+        when this methods comes in.
+        """
         value: str = ""
         for i in range(len(linearCodeSlice)):
             if (linearCodeSlice[i] == "'"):
@@ -84,7 +100,7 @@ class Tree:
         It will take the whole linearCode along with the index of where the leaf in question
         starts and, based on that, it will extract the leaf.
         """
-    def __extractInfoFromLeaf(self, linearCodeSlice:str):
+    def __extractInfoFromLeaf(self, linearCodeSlice:str) -> Tuple[Node, Node, Node, int]:
         """
         -format of a leaf: (<root>, <leftChild>, <rightChild>)
         -everything between the opening parethesis and the first comma is the root
@@ -106,8 +122,8 @@ class Tree:
         """
         i = 0
         root:str = ""
-        while (linearCode[i] != ','):
-            if (linearCode[i] != '('):
+        while (linearCodeSlice[i] != ','):
+            if (linearCodeSlice[i] != '('):
                 root+= linearCodeSlice[i]
         #updates the string
         del linearCodeSlice[:linearCodeSlice.index(',')+2]
@@ -128,3 +144,7 @@ class Tree:
         while (linearCodeSlice[i] != '('):
             rightLeaf += linearCodeSlice[i]
         return rightLeaf
+
+myTree = Tree()
+myTree.build((('expt', 'x', 2)))
+print("tudo certo")
