@@ -14,15 +14,16 @@ class Node:
 class Tree:
     def __init__(self):
         self.root = None
+        self.left = 1
+        self.right = 0
+        self.WHERE_TO_INSERT = self.left
+        self.scope:List[Node] = []
+        
     def isTreeEmpty(self):
         return self.root == None
     #it builds a tree
     def build(self,linearCode: Tuple):
-        left = 1
-        right = 0
-        WHERE_TO_INSERT = left
         linearCode = list(str(linearCode))
-        scope:List[Node] = []
         currentElem = None
         i = 0
         while (i < len(linearCode)):
@@ -38,11 +39,11 @@ class Tree:
                         self.root = bundle[0]
                         scope.append(self.root)
                     else:
-                        if (WHERE_TO_INSERT == left):
+                        if (self.WHERE_TO_INSERT == self.left):
                             scope[-1].left = bundle[0]
                         else:
                             scope[-1].right = bundle[0]
-                            WHERE_TO_INSERT = left
+                            self.WHERE_TO_INSERT = self.left
                         scope.append(bundle[0])
                     scope[-1].left = bundle[1]
                     scope[-1].right = bundle[2]
@@ -53,25 +54,27 @@ class Tree:
             elif (currentSymboll == ')' and i != len(linearCode)-1):
                 scope.pop()
             elif currentSymboll == ',' and linearCode[i+2] != '(':
-                WHERE_TO_INSERT = right
+                self.WHERE_TO_INSERT = self.right
             elif (currentSymboll >= '0' and linearCode[i] <= '9'):
-                currentElem = Node(self.getOperand(linearCode[i:]))
+                currentElem = Node(self.__getOperand(linearCode[i:]))
             elif (currentSymboll == "'"):
-                currentElem = Node(self.getOperator(linearCode[i+1]))
+                currentElem = Node(self.__getOperator(linearCode[i+1]))
 
-            if (not self.root and self.notTerminatorCharacter(self.root)):
+            if ((not self.root) and self.notTerminatorCharacter(self.root)):
+
                 self.root = currentElem
+
                 scope.append(self.root)
             elif (self.root and i != len(linearCode)-1) :
-                if (WHERE_TO_INSERT == left):
-                    scope[-1].left = currentElem
+                if (self.WHERE_TO_INSERT == self.left):
+                    scope[-1].self.left = currentElem
                 else:
                     scope[-1].right = currentElem
                 scope.append(currentElem)
             i+= 1
             
     def notTerminatorCharacter(self, char):
-        return (not (char in ",","(", ")"","'"]))
+        return (not (char in [","  ,  "("  ,  ")"  ,  "'"]))
         
         
     def __getOperator(self,linearCodeSlice:str):
@@ -155,7 +158,6 @@ class Tree:
         return rightLeaf
 
 myTree = Tree()
-myTree.build((('expt', 'x', 2)))
 myTree.build(('+', ('expt', 'x', 2), ('expt', 'y', 2)))
 
 print(myTree.root.value)
