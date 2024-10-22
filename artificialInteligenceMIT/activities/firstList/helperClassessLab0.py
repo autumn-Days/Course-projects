@@ -14,14 +14,14 @@ class Node:
 class Tree:
     def __init__(self):
         self.root = None
-    def isEmpty(self):
+    def isTreeEmpty(self):
         return self.root == None
     #it builds a tree
     def build(self,linearCode: Tuple):
         left = 1
         right = 0
         WHERE_TO_INSERT = left
-        linearCode = (str(linearCode))
+        linearCode = list(str(linearCode))
         scope:List[Node] = []
         currentElem = None
         i = 0
@@ -33,8 +33,8 @@ class Tree:
             currentSymboll = linearCode[i]
             if currentSymboll == '(':
                 if (self.__isLeaf(linearCode[i+1:])):
-                    bundle:Tuple[Node, Node, Node, int] = self.__extractInfoFromLeaf(linearCode[i])
-                    if (self.isEmpty()):
+                    bundle:Tuple[Node, Node, Node, int] = self.__extractInfoFromLeaf(linearCode[i:])
+                    if (self.isTreeEmpty()):
                         self.root = bundle[0]
                         scope.append(self.root)
                     else:
@@ -45,12 +45,12 @@ class Tree:
                             WHERE_TO_INSERT = left
                         scope.append(bundle[0])
                     scope[-1].left = bundle[1]
-                    scope[-1].right = bundle[0]
+                    scope[-1].right = bundle[2]
                     scope.pop()
-                    i = bundle[2]
+                    i = bundle[3]
                     continue
                         
-            elif currentSymboll == ')':
+            elif (currentSymboll == ')' and i != len(linearCode)-1):
                 scope.pop()
             elif currentSymboll == ',' and linearCode[i+2] != '(':
                 WHERE_TO_INSERT = right
@@ -59,16 +59,21 @@ class Tree:
             elif (currentSymboll == "'"):
                 currentElem = Node(self.getOperator(linearCode[i+1]))
 
-            if (not self.root):
+            if (not self.root and self.notTerminatorCharacter(self.root)):
                 self.root = currentElem
                 scope.append(self.root)
-            else :
+            elif (self.root and i != len(linearCode)-1) :
                 if (WHERE_TO_INSERT == left):
                     scope[-1].left = currentElem
                 else:
                     scope[-1].right = currentElem
                 scope.append(currentElem)
             i+= 1
+            
+    def notTerminatorCharacter(self, char):
+        return (not (char in ",","(", ")"","'"]))
+        
+        
     def __getOperator(self,linearCodeSlice:str):
         """
         After converting the tuple to a string, you will have something like that
@@ -108,11 +113,12 @@ class Tree:
         -everything between the second comma and the closing parethesis is the right child
         -for updating the index you just need to find the index of the closing parenthesis
         """
-        root:Node = Node(self.__getRootOfLeaf(linearCodeSlice))
+        currentIndex = linearCodeSlice.index(')');
+        
+        root:Node = Node(self.__getRootLeaf(linearCodeSlice))
         leftChild:Node = Node(self.__getLeftLeaf(linearCodeSlice))
         rightChild:Node = Node(self.__getRightLeaf(linearCodeSlice))
 
-        currentIndex = linearCodeSlice.index('(');
 
         return (root, leftChild, rightChild, currentIndex) 
     
@@ -123,8 +129,10 @@ class Tree:
         i = 0
         root:str = ""
         while (linearCodeSlice[i] != ','):
-            if (linearCodeSlice[i] != '('):
-                root+= linearCodeSlice[i]
+            currentChar = linearCodeSlice[i] 
+            if ((currentChar != '(') and (currentChar != "'")):
+                root+= currentChar
+            i+=1
         #updates the string
         del linearCodeSlice[:linearCodeSlice.index(',')+2]
         return root
@@ -141,10 +149,16 @@ class Tree:
         """
         rightLeaf: str = ""
         i = 0
-        while (linearCodeSlice[i] != '('):
+        while (linearCodeSlice[i] != ')'):
             rightLeaf += linearCodeSlice[i]
+            i+=1
         return rightLeaf
 
 myTree = Tree()
 myTree.build((('expt', 'x', 2)))
+myTree.build(('+', ('expt', 'x', 2), ('expt', 'y', 2)))
+
+print(myTree.root.value)
+print(myTree.root.left.value)
+print(myTree.root.right.value)
 print("tudo certo")
