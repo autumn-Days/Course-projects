@@ -8,18 +8,57 @@ body{
     margin-left: auto;
     margin-right: auto;
     max-width: 500px;
-    /*padding:20px;*/
+    padding:20px;
 }
 
 h1, h2, p{
     text-align: center;
 }
 
+hr{
+    height:2px;
+    color: brown;
+    background-color: brown;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
 .item p{
     display: inline-block;
-    
+    margin-top: 5px;
+    margin-bottom:5px;
 }
 
 .flavor{
-    margin-right:49%;
+    text-align: left;
+    width: 50%;
+    margin-bottom: 1px;
+}
+
+.price{
+    text-align: right;
+    width: 50%;
+    margin-top: -2px;
+}
+
+img{
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+a{
+    color: black;
+}
+
+a:hover{
+    color: brown;
+}
+
+a:active{
+    color:white;
+}
+
+#established{
+    font-style: italic;
 }
