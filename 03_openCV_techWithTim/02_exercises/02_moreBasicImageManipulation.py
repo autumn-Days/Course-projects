@@ -33,23 +33,34 @@ example of a 2x2 image
 """
 import cv2
 import random
+from typing import *
+
+class MatrixSlice():
+    def __init__(self,startLine, endLine, startColumn, endColumn):
+        self.startLine = startLine
+        self.endLine = endLine
+        self.startColumn = startColumn
+        self.endColumn = endColumn
 
 def addNoise(img):
     for i in range(50):
         for j in range(len(img[i])):
             img[i][j] = random.randint(0,250)
 
-def move(img,part1:List[List, List], part2:List[List, List]):
-    temp = part1
-    
-    img[part1[0], part1[1]] = img[part2[0], part2[1]]
-    img[part2[0], part2[1]] = img[temp[0], temp[1]]
+def swap(img, fst:MatrixSlice, snd:MatrixSlice):
+    temp = img[fst.startLine:fst.endLine, fst.startColumn:fst.endColumn].copy()
+    img[fst.startLine:fst.endLine, fst.startColumn:fst.endColumn] = img[snd.startLine:snd.endLine, snd.startColumn:snd.endColumn]
+    img[snd.startLine:snd.endLine, snd.startColumn:snd.endColumn] = temp
 
-    
+img1 = cv2.imread("../01_imgs/trees.jpg",1)
+img2 = cv2.imread("../01_imgs/trees.jpg",1)
+print(img1.shape) #(430, 1450, 3)
 
 
-img = cv2.imread("../01_imgs/trees.jpg",1)
-print(img.shape) #(430, 1450)
-addNoise(img)
-move(img, [])
-cv2.imwrite("output2.jpg", img)
+addNoise(img1)
+firstPiece = MatrixSlice(320,400,1300,1380)
+secondPiece = MatrixSlice(1,81,1,81)
+swap(img2, firstPiece, secondPiece)
+
+cv2.imwrite("output2.jpg", img1)
+cv2.imwrite("output3.jpg", img2)
