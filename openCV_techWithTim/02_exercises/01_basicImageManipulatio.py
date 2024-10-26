@@ -23,7 +23,6 @@ cv2.resize(<image>, (0,0), fx=<widthProportion>, fy=<heightProportion>)
 cv2.rotate(<image>, <rotationMode>)
 cv2.rotate(<image>, cv2.cv2.ROTATE_90_CLOCKWISE)
 """
-
 img = cv2.imread("../01_imgs/trees.jpg",0)
 #cv2.imshow("myImage", img)
 img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
