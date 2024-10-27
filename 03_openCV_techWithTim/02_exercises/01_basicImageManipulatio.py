@@ -19,6 +19,7 @@ cv2.destroyAllWindows():
 
 cv2.resize(<image>, (width,height))
 cv2.resize(<image>, (0,0), fx=<widthProportion>, fy=<heightProportion>)
+    -To resize with proportion
 
 cv2.rotate(<image>, <rotationMode>)
 cv2.rotate(<image>, cv2.cv2.ROTATE_90_CLOCKWISE)
