@@ -15,11 +15,12 @@ def divideCanvasByFour(capture, frame, canvas):
     height = int(capture.get(4)) #The parameter 4 specifies the height
     frameDivided = cv2.resize(frame, (0,0), fx=0.5, fy=0.5)
     #making the divisions
-    canvas[height//2:, :width//2] = frameDivided
-    canvas[height//2:, width//2:] = frameDivided
+    canvas[height//2:, :width//2] = cv2.rotate(frameDivided, cv2.ROTATE_180)
+    canvas[height//2:, width//2:] = cv2.rotate(frameDivided, cv2.ROTATE_180)
     canvas[:height//2, :width//2] = frameDivided
     canvas[:height//2, width//2:] = frameDivided
-
+    
+    cv2.imshow("frame", canvas)
 
 #def divideVideoByFour():
 
@@ -32,7 +33,7 @@ while True:
     """
     ret, frame = capture.read()
     canvas = initCanvas(frame)
-    cv2.imshow("frame", canvas)
+    divideCanvasByFour(capture, frame, canvas)
     """
     it will wait 1 millisecond for the key
     to be 'q' key to be pressed. After that,
